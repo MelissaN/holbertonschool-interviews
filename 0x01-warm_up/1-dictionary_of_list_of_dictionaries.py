@@ -2,6 +2,7 @@
 """
 Request data from API endpoints; export data in JSON format into file
 """
+from collections import OrderedDict
 import json
 import requests
 
@@ -17,9 +18,11 @@ def display():
 
     todos = requests.get("http://jsonplaceholder.typicode.com/todos")
     for t in todos.json():
-        dic[str(t.get('userId'))].append({"username": dic[str(t.get('userId'))][0],
-                                          "task": t.get('title'),
-                                          "completed": t.get('completed')})
+        task = OrderedDict()
+        task["username"] = dic[str(t.get('userId'))][0]
+        task["task"] = t.get('title')
+        task["completed"] = t.get('completed')
+        dic[str(t.get('userId'))].append(task)
 
     for i in dic:
         dic[i].pop(0)
@@ -27,7 +30,6 @@ def display():
     filename = "todo_all_employees.json"
     with open(filename, 'w') as f:
         json.dump(dic, f)
-
 
 
 if __name__ == "__main__":
